@@ -18,6 +18,12 @@ const credentialPatterns = [
 ];
 // binaries reviewed by hand, pinned by sha256 so any change needs a new review.
 const reviewedBinaries: Record<string, string> = {
+  ".github/assets/diagrams/handoffs.png": "3ee57c454da694f9a3426e1091d0e8836515144cb125649d4d89703d3d1c48bf",
+  ".github/assets/diagrams/loop.png": "1c78ce75a834ea27612941796cc781bc5d17e54459a7bdfe50de3953faf813f7",
+  ".github/assets/diagrams/memory.png": "300911f37452f93558c5df068a5daa8f73a177e7e8c86712bd435503eb2e9473",
+  ".github/assets/diagrams/splits.png": "ed9ba76a4c65d51748cf642adcc5ace4752df0554afa3bef7cdd097cc9e92de9",
+  ".github/assets/diagrams/sync.png": "04a1e2926b50e5357fba7a880b5db25b5796eda4f0d4ade47d85756760fefe44",
+  ".github/assets/diagrams/team.png": "b902349838acf5b665b1f6edb9993048ec06ab335096aa0a4b9270ded5f45b18",
   ".github/assets/banner.png": "755e22ecc84918bea01cb92fde6106667c7f3b17fd3db4a958d4a306477ece35",
 };
 const failures: string[] = [];
