@@ -26,8 +26,6 @@ agent-doctrine is a set of instructions, role prompts, and skills that one sync 
 ## What's this for?
 
 > It's easy to ship code with AI, but shipping well-vetted and well-tested code is a whole different beast altogether. This repo is an encapsulation of over a year's worth of base workflows, prompts, and skills that have been continuously refined and iterated on to allow our AI agents to ship tested work confidently. This allows us to write a spec - dispatch to an AI agent - which will then dispatch to its own team - and return with a well-tested PR ready for final human approval.
->
-> — Kix, [sisig-ai](https://github.com/sisig-ai)
 
 In practice, the doctrine gives each agent:
 
