@@ -1,0 +1,1 @@
+Always work in a git worktree unless the user explicitly says to use the primary checkout. Create `git worktree add .claude/worktrees/kp-<kebab> -b kp-<kebab> origin/main` and do all edits, tests, and commits there. Keep `main` in the primary checkout. Do not edit the primary working tree for feature work.

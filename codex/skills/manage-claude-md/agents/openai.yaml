@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Agent Doctrine"
+  short_description: "Sync shared doctrine and inspect host adapters"
+  default_prompt: "Use $manage-claude-md to inspect or sync doctrine on the selected machine."

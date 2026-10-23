@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "slug": "adv-review-native",
+      "content": "simplifier and adv_review always use the host-native agent and model from the generated delegation table. before adv_review, load the `doctrine-review` skill and start `adv_review` as a subagent. never launch Codex CLI (`codex exec`) for these two roles. the transcript records the host runtime line (`runtime: cursor-subagent`, `runtime: claude-agent`, or `runtime: codex-subagent`) before the review counts as done.",
+      "sha256": "24c1e8ee055dfa8f7bfd4b970a660a66741e1696677f0f6cd92d1e5bf1d202a8"
+    },
+    {
+      "slug": "async-substance-not-theater",
+      "content": "On long-running work, manage jobs in the background and report substance \u2014 not status theater. He will ping \"update?\" while jobs run; answer with real progress, evidence, or blockers.",
+      "sha256": "3f31bed48f8466c886ebba3333c9e1fd60c0b62e326683d5440ce7afed04c77a"
+    },
+    {
+      "slug": "cli-agents-detached-background",
+      "content": "Spawn external CLI sub-agents (codex exec, cursor-agent CLI, etc.) detached in the background \u2014 e.g. shell `&` + pid file, tmux, or the host Bash tool's background/`block_until_ms: 0`/`run_in_background`. Never foreground a long CLI agent under the Bash tool: its timeout kills the run mid-flight. Supervise the porch note (`sessions/<session>/agent-notes-<id>.md` or `agent-findings-<id>.md`); do not block the lead session waiting on CLI stdout.",
+      "sha256": "7e68b4374b52ee12d2ebec3285e5dd37ddb3ff622309392f5bba117bc61a9c9a"
+    },
+    {
+      "slug": "cli-agents-scratch-deliverable",
+      "content": "When invoking an external CLI agent (codex exec, cursor-agent CLI, etc.), supervise via the porch note \u2014 never by Reading/tailing raw stdout/stderr into context. CLI-invoked review \u2192 `sessions/<session>/agent-findings-<id>.md`. CLI-invoked implementer \u2192 `sessions/<session>/agent-notes-<id>.md` (agent sole writer + required `## Final`). A temp local file is allowed only so the process can exit; `vault_save` it to that title and delete the temp. Never point `-o`/`wait >` at the porch note. Redirect streams to a temp log; bounded tail only on hang/fail/incomplete porch note. Native in-session scout, simplifier, adv_review, and implementer stay in-session; briefs remain INPUT-only.",
+      "sha256": "2d77a3aedb13f7e5149915554d12c77bd6d792e3ddc23c06b50c8735ab9c5a83"
+    },
+    {
+      "slug": "doctrine-no-exemptions",
+      "content": "Any code change (edit/create/delete of source, config, or tests) must follow the full doctrine sequence with **no size-based exemptions**: (1) full session-start reads of TASTE/TENETS/LOCAL without Read `limit`/`offset`, (2) scout: write the brief and dispatch `scout` first, read the findings (skill: `doctrine-scout`), (3) all fifteen TENETS gate answers **written in the transcript** before the first edit (skill: `doctrine-plan`), (4) plan loop with splits (skill: `doctrine-plan`) \u2014 rigorous: plan \u2192 simplifier \u2192 adv_review \u2192 the user approval; fast: plan \u2192 implementer directly, (5) `implementer` writes the code, one per split, concurrently (hand-write only if the user explicitly directs; skill: `doctrine-implement`), (6) `adv_review` on each split diff (skill: `doctrine-review`), (7) consolidate the split branches (skill: `doctrine-consolidate`), (8) verify, then ship (skill: `doctrine-ship`). The mode covers the plan-level reviews and approval only. Ask the user `fast or rigorous?` at session start; assume fast unless the user says otherwise. \"Small\", \"obvious\", \"staff-only\", \"UI-only\", \"cloud/background agent\", and \"high autonomy\" do not waive any step. Autonomy chooses solutions *inside* the loop \u2014 it is not permission to skip it. If you are about to edit and the gate answers + spec are not already in the transcript, stop.",
+      "sha256": "a661df3c362586c5ad1b125333d276f78455d8b8b4e0108ca99ed717f16e0225"
+    },
+    {
+      "slug": "hypothesis-first-dialogue",
+      "content": "Treat the user's framings as hypotheses to test, not instructions to execute. He often opens with a guess and invites verification or a better idea. Disagree with reasons when warranted; yes-man behavior is a failure mode.",
+      "sha256": "a25f6a63590cd624f712485d729895025a08c735aa8c5ac41c594e8d7da74cf3"
+    },
+    {
+      "slug": "match-narrow-scope-literally",
+      "content": "When the user names a specific scope \u2014 a module, file, or step \u2014 execute exactly that and stop. Do not pivot to the adjacent logical next step without asking in one line first. During step-by-step prod ops, stay terse and skip pipeline lectures.",
+      "sha256": "765638e4fa095af74854bd8f9e464aab15593eecfb46d7567a29149fa7bbf711"
+    },
+    {
+      "slug": "read-taste-md",
+      "content": "Before any substantial work, read `~/.cursor/TASTE.md`, `~/.cursor/TENETS.md`, and `~/.cursor/LOCAL.md` **fully** \u2014 never truncate those session-start files with Read `limit`/`offset`. Apply taste to tone, delegation, engineering judgment, and how work is verified and shipped; clear the tenets gate for engineering changes; use LOCAL for machine-specific context. Trivial one-liners may skip. Re-read when a task touches those areas or when the user corrects a preference.",
+      "sha256": "968846e4a990f2932689a656ef6f596a6882a5c8ab265fc390b5a3af851436ef"
+    },
+    {
+      "slug": "route-bash-through-tokensieve",
+      "content": "When Shell output will enter LLM context, invoke supported commands via `tokensieve` \u2014 never bare `git status`/`git log`/`git diff`, `cargo test`, `pytest`, `bun test`, `eslint`, `prettier`, `django test`, `ruff`, `mypy`, `rg`, or `grep`. Examples: `tokensieve git status`, `tokensieve bun test tests/foo.test.ts`, `tokensieve rg pattern`. Explicit invocation only \u2014 no PreToolUse auto-allow hooks; do not use rtk. If `tokensieve` is missing from PATH, use the raw command and say so. Hot unsupported noise belongs in `sisig-ai/tokensieve` (`~/tokensieve`), not ad-hoc wrappers.",
+      "sha256": "4c61cc8522a25b9c093b293a7d060539b7f9d1466775cefd027fa47228c9e830"
+    },
+    {
+      "slug": "terse-lowercase-imperative",
+      "content": "Mirror the user's communication style under ASD-STE100: terse, lowercase, imperative. Short messages, no salutations. No preamble, no trailing summaries, no \"I'll now\u2026\". State the result or the next action. Forced lowercase stays \u2014 STE does not waive it.",
+      "sha256": "b37c2256a32764ce43dfb49cc0e5c8c4c1c6b5c397573eb8698baae0172a5945"
+    },
+    {
+      "slug": "use-asd-ste100",
+      "content": "NON-NEGOTIABLE: Use ASD-STE100 Simplified Technical English for all agent writing (chat, plans, briefs, reviews, handoffs, PRs, commits, user-facing prose), and write it in explicit lowercase. Apply STE writing rules, dictionary, and grammar: one word, one meaning; short sentences; one topic per sentence; active voice; approved verb forms only (infinitive, imperative, simple present, simple past, simple future, past participle as adjective); American English; domain technical names/verbs allowed. Prefer simple approved words over synonyms and jargon. Forced lowercase is required and is not waived by STE. Keep messages short: no preamble, no trailing summaries, no salutations. State the result or the next action.",
+      "sha256": "c0b150ed4bd042a583bb51f5fc992e5d5c75d3c353895a4ede5f86e6916f1b9a"
+    },
+    {
+      "slug": "worktrees-default",
+      "content": "Always work in a git worktree unless the user explicitly says to use the primary checkout. Create `git worktree add .claude/worktrees/kp-<kebab> -b kp-<kebab> origin/main` and do all edits, tests, and commits there. Keep `main` in the primary checkout. Do not edit the primary working tree for feature work.",
+      "sha256": "e0214b6ce2bedda2ff9c18732b114da75c5be58e56e986e1b5aa6a60597c43ea"
+    }
+  ]
+}

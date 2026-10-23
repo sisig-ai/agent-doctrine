@@ -1,0 +1,99 @@
+[claude.simplifier]
+model = "claude-opus-5-5"
+runtime = "claude-agent"
+
+[claude.adv_review]
+model = "claude-opus-5-5"
+runtime = "claude-agent"
+
+[claude.implementer]
+model = "claude-sonnet-5-5"
+runtime = "claude-agent"
+
+[claude.implementer_light]
+model = "claude-haiku-5-5"
+runtime = "claude-agent"
+
+[claude.scout]
+model = "claude-haiku-5-5"
+runtime = "claude-agent"
+
+[codex.simplifier]
+model = "gpt-6.1-sol"
+runtime = "codex-subagent"
+
+[codex.adv_review]
+model = "gpt-6.1-sol"
+runtime = "codex-subagent"
+
+[codex.implementer]
+model = "gpt-6.1-sol"
+runtime = "codex-subagent"
+
+[codex.scout]
+model = "gpt-6-luna"
+runtime = "codex-subagent"
+
+[cursor.simplifier]
+model = "cursor-grok-4.7-high"
+runtime = "cursor-subagent"
+
+[cursor.adv_review]
+model = "cursor-grok-4.7-high"
+runtime = "cursor-subagent"
+
+[cursor.implementer]
+model = "composer-2.5"
+runtime = "cursor-subagent"
+
+[cursor.scout]
+model = "composer-2.5"
+runtime = "cursor-subagent"
+
+[opencode.simplifier]
+model = "opencode-go/mimo-v2.6-pro"
+runtime = "opencode-subagent"
+
+[opencode.adv_review]
+model = "default"
+runtime = "opencode-subagent"
+
+[opencode.implementer]
+model = "opencode-go/deepseek-v4.1-flash#high"
+runtime = "opencode-subagent"
+
+[opencode.scout]
+model = "default"
+runtime = "opencode-subagent"
+
+[grok.simplifier]
+model = "grok-4.7"
+runtime = "grok-subagent"
+
+[grok.adv_review]
+model = "grok-4.7"
+runtime = "grok-subagent"
+
+[grok.implementer]
+model = "grok-4.7"
+runtime = "grok-subagent"
+
+[grok.scout]
+model = "default"
+runtime = "grok-subagent"
+
+[muse.simplifier]
+model = "muse-wonder-1.0"
+runtime = "muse-subagent"
+
+[muse.adv_review]
+model = "muse-wonder-1.0"
+runtime = "muse-subagent"
+
+[muse.implementer]
+model = "muse-spark-1.3"
+runtime = "muse-subagent"
+
+[muse.scout]
+model = "default"
+runtime = "muse-subagent"

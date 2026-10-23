@@ -1,0 +1,29 @@
+---
+description: Load canonical memory only for the current registered project root
+alwaysApply: true
+---
+
+# Registered project memory
+
+Before substantive work in a git repository or configured shared root, run `doctrine-sync project-memory path`
+from that root. If it returns a path, **do not** read `MEMORY.md` in full. Discover notes with one bounded search against the index only:
+
+```bash
+rg -i -m 10 -- '<task-specific terms>' "$MEMORY_ROOT/MEMORY.md"
+```
+
+Read only the linked note files from relevant matches. One broader bounded retry (`-m 10`) is allowed if nothing matched; never fall back to loading the entire index. Never read `conflicts/`. No output means the root is unregistered. A returned path that cannot be read is an error, not a reason to use another memory source.
+
+For the full agent contract — `project_id`, canonical memory path, and native memory path — run:
+
+```
+doctrine-sync project-memory path --json [/path/to/checkout]
+```
+
+This emits `{"project_id":"…","canonical_memory":"/abs/…/projects/<id>/memory","native_memory":"/abs/…"}` when registered, or nothing (exit 0) when unregistered. Use `canonical_memory` as `$MEMORY_ROOT` for the index search above.
+
+## Writing project memory
+
+To persist new knowledge, create a new file `agent_note_<slug>.md` under the **native_memory** path returned by `--json`. Never edit existing corpus files unless explicitly merging. Never write `feedback_*.md` (those are Claude reflection inputs into global doctrine). Native writes are local until `project-memory-preview` + `project-memory-apply`; other machines pick them up via `project-memory-pull`. When you add a note, also append one index line to `MEMORY.md` (`- [title](file.md) — blurb`); do not rewrite unrelated index entries.
+
+`shared:` roots match the exact registered directory only — descendants do not inherit the registration.

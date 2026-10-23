@@ -1,0 +1,118 @@
+name: workstation image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: read
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/agent-workstation
+  DOCKER_METADATA_SHORT_SHA_LENGTH: 40
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.filter.outputs.image }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            image:
+              - '.dockerignore'
+              - 'workstation/Dockerfile'
+              - 'workstation/entrypoint.sh'
+              - 'workstation/healthcheck.sh'
+              - 'workstation/portable-LOCAL.md'
+              - 'src/**'
+              - 'scripts/**'
+              - 'sync.sh'
+              - 'package.json'
+              - 'bun.lock'
+              - 'bunfig.toml'
+              - 'tsconfig.json'
+              - '**/skills/**/scripts/**'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+      - run: bun install --frozen-lockfile
+      - run: bun test
+
+  image-smoke:
+    needs: test
+    if: needs.test.outputs.image == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: build platform image
+        run: docker buildx build --platform '${{ matrix.platform }}' --load -f workstation/Dockerfile -t workstation-smoke .
+      - name: check image tools and snapshot
+        run: |
+          docker run --rm --entrypoint bash workstation-smoke -lc '
+            set -euo pipefail
+            claude --version | grep -F 2.1.285
+            codex --version | grep -F 0.155.0
+            opencode --version | grep -F 2.0.24
+            t3 --version | grep -F 0.0.44
+            tokensieve --version 2>&1 | grep -F 0.1.0
+            test "$(tmux -V)" = "tmux 3.6"
+            semble --help >/dev/null
+            UV_TOOL_DIR=/opt/uv-tools uv tool list | grep -F "semble v0.3.4"
+            test "$(tailscale version | head -n1)" = 1.88.3
+            grep -aF "file:" /usr/local/bin/tailscale >/dev/null
+            test "$(bun --version)" = 1.3.13
+            docker --version | grep -F 29.8.2
+            docker compose version | grep -F 5.6.0
+            docker buildx version | grep -F v0.37.2
+            uv --version | grep -F "uv 0.12.22"
+            test -x /usr/local/lib/docker/cli-plugins/docker-compose
+            test -x /usr/local/lib/docker/cli-plugins/docker-buildx
+            test ! -e /opt/claude-md/LOCAL.md
+            install -d -o coder -g coder /tmp/smoke-home
+            su coder -s /bin/bash -c "HOME=/tmp/smoke-home CLAUDE_MD_TARGET=/tmp/smoke-home/.claude CODEX_MD_TARGET=/tmp/smoke-home/.codex CURSOR_MD_TARGET=/tmp/smoke-home/.cursor OPENCODE_MD_TARGET=/tmp/smoke-home/.config/opencode /opt/claude-md/sync.sh apply-snapshot"
+          '
+
+  publish:
+    if: >-
+      always() &&
+      github.event_name != 'pull_request' &&
+      needs.test.result == 'success' &&
+      needs.image-smoke.result == 'success'
+    needs: [test, image-smoke]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=main
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: workstation/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: mode=max
+          sbom: true
