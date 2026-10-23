@@ -144,7 +144,42 @@ The full bootstrap (`scripts/machine-setup.sh`) currently requires the Honcho an
 
 ## Optional full workstation
 
-[SETUP.md](SETUP.md) describes CLI and MCP bootstrap. [workstation/README.md](workstation/README.md) describes a locally built container. Both require your own accounts and explicit configuration. The OpenCode service password has no default, and the optional proxy provider stays disabled until you supply its URL and key. Container image publication is a manually triggered workflow.
+Two paths go past the doctrine-only install. Both need your own accounts, and both read secrets from the environment or from mounted files, never from this repo.
+
+### Bare machine: `scripts/machine-setup.sh`
+
+Run it on a Mac or Linux machine you already use. [SETUP.md](SETUP.md) lists the variables it requires. In order, it:
+
+1. Installs Bun, uv, semble, and the `claude`, `codex`, `cursor-agent`, and OpenCode V2 CLIs when they are missing.
+2. Runs `./sync.sh install` (wrappers such as `doctrine-sync` and the `LOCAL.md` reconcile) and `./sync.sh pull-all` (doctrine into every agent home).
+3. Wires the Honcho, semble, and Porch MCP servers into Claude, Cursor, Codex, and OpenCode configs. Secrets go in as `{env:...}` references, never as values.
+4. Starts OpenCode as a service on port 4096 behind `OPENCODE_SERVER_PASSWORD`, and waits up to 60 s for it to answer.
+5. Runs `scripts/mcp-smoke.sh` and `./sync.sh status`. CLI logins stay manual (see [SETUP.md](SETUP.md)).
+
+### Container: `workstation/`
+
+A Docker image for a remote or throwaway agent box, reached over Tailscale SSH as user `coder`. [workstation/README.md](workstation/README.md) has the full runbook.
+
+- The image pins Claude Code, Codex, OpenCode, T3 Code, Bun, uv, semble, Docker-in-Docker, and Tailscale, and builds tokensieve from source.
+- On start, `entrypoint.sh` joins the tailnet, imports CLI logins from `secrets/` once, runs `sync.sh apply-snapshot`, wires OpenCode, and supervises OpenCode (port 4096) and T3 Code (port 3773).
+- Named volumes keep `/home/coder`, Docker state, and the Tailscale identity across rebuilds.
+- `workstation/portable-LOCAL.md` is the `LOCAL.md` template for the container.
+- The OpenCode `/setup-new-machine <ssh instructions>` command provisions this container on a remote Docker host.
+- The image needs `privileged: true` for Docker-in-Docker. Anyone who controls the container controls its nested Docker daemon.
+
+### Scripts
+
+| Script | What it does |
+| --- | --- |
+| `sync.sh` | Entry point for every `doctrine-sync` command. Finds Bun, then runs `src/cli.ts`. |
+| `scripts/machine-setup.sh` | Full bootstrap of a bare machine (above). |
+| `scripts/wire-mcp.py` | Writes Honcho, semble, and Porch entries into `~/.claude/settings.json`, `~/.cursor/mcp.json`, and `~/.codex/config.toml`, and writes `~/.config/porch/mcp.env` (mode 600). Skips Honcho or Porch when its variables are unset. |
+| `scripts/wire-opencode-mcp.ts` | Merges the same servers into OpenCode's `opencode.json(c)`. Keeps comments and other settings. Fails without writing on invalid JSONC. |
+| `scripts/wire-opencode-provider.ts` | Adds the optional `cliproxyapi` OpenCode provider when `CLIPROXY_BASE_URL` and `CLIPROXY_API_KEY` are both set, and removes it otherwise. |
+| `scripts/mcp-smoke.sh` | Checks semble on `PATH`, a live Honcho list call, a live Porch `tools/list`, the `mcp.env` file mode, and each host's MCP config. Runs every check, then exits non-zero if any failed. |
+| `scripts/handoff.ts` | Writes local handoff notes (specs, reviews, stories) for machines in local handoff mode. Each write appends a delta, keeps history byte-exact, holds a per-note lock, and records a receipt with a content hash. `--compress` shortens prose blocks through the agent's own CLI. |
+| `scripts/generate.ts` | `bun run generate`: rebuilds host adapters and test fixtures in the repo without touching agent homes. |
+| `scripts/check-public.ts` | `bun run check:public`: fails on tracked private paths (`projects/`, `LOCAL.md`, `.env`, ledgers), credential patterns, Tailscale hostnames, and unreviewed binaries. CI runs it. |
 
 ## Development
 
@@ -381,11 +416,45 @@ Shared loop skills (`doctrine-scout`, `doctrine-plan`, `doctrine-implement`, `do
 
 ## Memory Reflection
 
-Claude reflection analyzes global `~/.claude/memory` plus project `feedback_*.md` memories. Codex reflection analyzes selected `~/.codex/memories/*.md`. Cursor reflection exports cloud User Rules through the MCP bridge into `~/.cursor/memory/` and then distills durable guidance into shared `CLAUDE.md` / `TASTE.md`.
+Agents save small notes as they work (Claude's `~/.claude/memory`, Codex's `~/.codex/memories`, Cursor's cloud User Rules). Reflection reads those notes and proposes edits to the shared `CLAUDE.md` and `TASTE.md`, so a correction made once on one host becomes doctrine on every host.
 
-Raw memories are not synced. Durable doctrine can be published; reflection ledgers stay local in this edition.
+Inputs per host:
+
+- Claude: every file in `~/.claude/memory`, plus `feedback_*.md` files in each project's memory. Other project memory is ignored.
+- Codex: selected `~/.codex/memories/*.md`.
+- Cursor: cloud User Rules, exported through the MCP bridge into `~/.cursor/memory/`.
+
+Each run has two steps:
+
+1. `reflect-<host>-memory-preview` sends the pending notes and the current docs to `claude -p` with no tools and a fixed JSON schema. The output is a patch (`.memory-reflect.patch`), a rationale, and one status per note: `applied`, `already_represented`, or `not_relevant`. The patch must pass `git apply --check`, and every pending note must get exactly one status, or the run fails.
+2. `reflect-<host>-memory` applies the patch, appends the statuses to the ledger, re-syncs the host, and commits and pushes. Point it at your own fork, not this upstream.
+
+Raw memory files never enter the repo. Only the reviewed doctrine edits do.
+
+### Ledgers and state files
+
+A ledger is an append-only JSONL file. Each line records one decision with a timestamp, host, path, and sha256. Ledgers make the tooling repeatable: a memory note whose path and hash already have a closed status is skipped on the next run, and a changed note is analyzed again.
+
+| File | Written by | Records |
+| --- | --- | --- |
+| `memory-reflect-ledger.jsonl` (also `codex-` and `cursor-` variants) | memory reflection | One line per memory note: status, rationale, and the sha256 of the patch that applied it |
+| `agent-reflect-ledger.jsonl`, `cursor-*-reflect-ledger.jsonl`, `opencode-*-reflect-ledger.jsonl`, `codex-agents-md-reflect-ledger.jsonl` | the generators | Each write or delete of a generated host adapter |
+| `.*-reflect.patch`, `.rationale`, `.statuses.json` | preview commands | The last preview, consumed by the matching apply |
+| `~/.local/state/doctrine-sync/project-memory/<id>.ledger.json` | project memory | The merge base: the hash of every memory file at the last sync |
+| `~/.config/doctrine-sync/projects.toml` | `project-memory-register` | Which checkout and native memory directory map to each project id |
+
+All repo-root ledgers and preview files are gitignored in this edition, and `check:public` fails if a ledger is tracked. A private fork can commit its ledgers to share the history across machines.
 
 ## Project Memory
+
+Project memory keeps one shared copy of an agent's per-project notes (for example Claude's `~/.claude/projects/<project>/memory`) in your private fork under `projects/<id>/memory`, so every machine sees the same notes.
+
+The sync is a three-way merge. The base is the ledger in `~/.local/state/doctrine-sync/project-memory/`. The two sides are the repo copy and the agent's native directory. A file changed on one side only takes that side. A file changed on both sides is a conflict:
+
+- `MEMORY.md` index conflicts merge without a model, keyed by link target. Two edits to the same entry fail.
+- Other notes go to Claude in `--safe-mode` with no tools, no MCP servers, and no saved session. The tool checks the returned merge plan against a schema and caches verified merges.
+
+`project-memory-preview` writes the result and an approval hash. `project-memory-apply --approval-hash <hash>` writes those exact bytes, updates the ledger, and commits and pushes `projects/<id>/memory`. It never runs a model again. `project-memory-pull` copies the repo version to a machine and refuses when the native copy has diverged. Every step holds a per-project file lock.
 
 Registered project memory is an opt-in, canonical corpus under `projects/<id>/memory`.
 Machine registrations and base ledgers remain local. Every Markdown file in the registered
