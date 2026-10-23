@@ -86,7 +86,9 @@ export async function main(argv: string[]): Promise<number> {
     applySnapshot();
     return 0;
   }
-  if (process.env.CLAUDE_MD_SNAPSHOT && command !== "status") {
+  // read-only commands the doctrine tells agents to run must work from a snapshot install.
+  const snapshotReadOnly = new Set(["status", "project-memory-path", "handoff-capabilities"]);
+  if (process.env.CLAUDE_MD_SNAPSHOT && !snapshotReadOnly.has(command)) {
     throw new Error(`snapshot source is read-only; unsupported command: ${command}`);
   }
   if (!process.env.CLAUDE_MD_SNAPSHOT) ensureRepo();

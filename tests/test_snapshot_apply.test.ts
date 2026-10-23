@@ -168,5 +168,10 @@ describe("apply-snapshot", () => {
     expect(status.status, `${status.stdout}\n${status.stderr}`).toBe(0);
     expect(status.stdout).toContain("snapshot:       read-only");
     expect(status.stderr).not.toContain("network command called");
+    const memoryPath = spawnSync("bash", ["-lc", `cd '${root}' && env -i HOME='${home}' PATH='${join(home, ".local", "bin")}:${realBin}:${blocked}:/usr/bin:/bin' doctrine-sync project-memory path --json`], {
+      encoding: "utf-8",
+    });
+    expect(memoryPath.status, `${memoryPath.stdout}\n${memoryPath.stderr}`).toBe(0);
+    expect(memoryPath.stderr).not.toContain("read-only");
   }, 120_000);
 });
