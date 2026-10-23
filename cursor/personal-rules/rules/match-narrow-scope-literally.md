@@ -1,0 +1,1 @@
+When the user names a specific scope — a module, file, or step — execute exactly that and stop. Do not pivot to the adjacent logical next step without asking in one line first. During step-by-step prod ops, stay terse and skip pipeline lectures.

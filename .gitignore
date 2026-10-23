@@ -1,0 +1,53 @@
+# Machine-local agent notes (never committed).
+# Canonical content lives in ~/.claude/LOCAL.md; agent homes symlink to it.
+# Per-checkout cache is written under .local/ by reconcileMachineLocal().
+LOCAL.md
+.local/
+.memory-reflect.patch
+.memory-reflect.rationale
+.memory-reflect.statuses.json
+.codex-memory-reflect.patch
+.codex-memory-reflect.rationale
+.codex-memory-reflect.statuses.json
+.agent-reflect.patch
+.agent-reflect.rationale
+.agent-reflect.statuses.json
+.cursor-rule-reflect.patch
+.cursor-rule-reflect.rationale
+.cursor-rule-reflect.statuses.json
+.cursor-agent-reflect.patch
+.cursor-agent-reflect.rationale
+.cursor-agent-reflect.statuses.json
+.cursor-personal-rules.statuses.json
+.cursor-memory-reflect.patch
+.cursor-memory-reflect.rationale
+.cursor-memory-reflect.statuses.json
+.codex-agents-md-reflect.patch
+.codex-agents-md-reflect.rationale
+.codex-agents-md-reflect.statuses.json
+.opencode-agent-reflect.patch
+.opencode-agent-reflect.rationale
+.opencode-agent-reflect.statuses.json
+.opencode-agents-md-reflect.patch
+.opencode-agents-md-reflect.rationale
+.opencode-agents-md-reflect.statuses.json
+node_modules/
+# handoff files (HANDOFFS.md) — never committed
+.scratch/
+
+# Private state is never part of the public doctrine.
+projects/
+*-ledger.jsonl
+.env
+.env.*
+!.env.example
+**/secrets/
+**/auth.json
+**/.credentials.json
+**/mcp.env
+__pycache__/
+*.pyc
+*.log
+*.pid
+.DS_Store
+workstation/backups/

@@ -1,0 +1,6 @@
+{
+  "name": "handoff",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./index.ts" }
+}

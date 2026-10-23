@@ -1,0 +1,6 @@
+services:
+  workstation:
+    image: portable-agent-workstation:local
+    build:
+      context: ..
+      dockerfile: workstation/Dockerfile
