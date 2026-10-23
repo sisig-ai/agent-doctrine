@@ -75,6 +75,55 @@ OpenCode, Grok, and Muse bindings are in [delegation.toml](delegation.toml). Edi
 
 ## Quick start
 
+### Recommended: ask your agent to install it
+
+Paste this prompt into Claude Code, Codex, Cursor, OpenCode, or another coding agent on the machine. The agent backs up your config, installs the doctrine, and reports the result.
+
+```text
+install agent-doctrine (https://github.com/sisig-ai/agent-doctrine) on this machine.
+follow these steps in order. stop and ask me when a step fails. do not guess a fix.
+
+1. check for git and bun. if bun is missing, install it from https://bun.sh.
+2. back up the current agent config before you change it:
+   tar czf ~/agent-config-backup-$(date +%Y%m%d-%H%M%S).tgz -C ~ \
+     $(cd ~ && ls -d .claude .codex .cursor .config/opencode .grok .config/muse 2>/dev/null)
+   confirm the archive exists and is not empty. do not overwrite any file without this backup.
+3. clone the repo to ${CLAUDE_MD_REPO:-~/.claude/.claude-md-repo}.
+   if the directory exists, run git pull --ff-only there instead. do not delete it.
+4. in the repo, run:
+   bun install --frozen-lockfile
+   export CLAUDE_MD_DIR="$PWD"
+   ./sync.sh apply-snapshot
+5. ask me which optional services this machine uses: porch, honcho, other mcp servers, or none.
+   default to none if i skip the question.
+6. write ~/.claude/LOCAL.md with machine-specific facts only. if the file exists, append; do not replace it.
+   for each service i do not use, add its opt-out line:
+   - this machine does not require porch. store handoffs as local files.
+   - this machine does not use honcho. skip memory recall and memory saves.
+   for a service i do use, read SETUP.md and ask me to export its variables.
+   do not invent tokens, keys, workspace ids, or credentials. do not write secret values into any file.
+7. run ./sync.sh reconcile-local, then ./sync.sh handoff-capabilities.
+   if i use opencode without porch, also run ./sync.sh install-handoff-local.
+8. run the checks in the "doctrine verification" section of SETUP.md:
+   ./sync.sh status
+   test -f ~/.claude/CLAUDE.md
+   test -f ~/.codex/AGENTS.md
+   test -f ~/.cursor/rules/doctrine.mdc
+   test -f ~/.config/opencode/AGENTS.md
+   test -f ~/.config/opencode/agents/simplifier.md
+   test -f ~/.claude/TASTE.md && test -f ~/.cursor/TASTE.md
+   a check for a host that is not installed can fail. report it as skipped, not as an error.
+9. report: the backup path, the repo path and commit, the hosts that got the doctrine,
+   the LOCAL.md contents, and each check result.
+   also tell me the manual steps that remain:
+   - claude must be logged in (claude auth login) before it loads the doctrine.
+   - in codex, open /hooks once and trust the style hook, or the per-prompt style reminder does not run.
+```
+
+### Manual install (alternative)
+
+Use these steps if you prefer to run each command yourself.
+
 Requires Git and [Bun](https://bun.sh/). Installation rewrites global agent instructions (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.cursor/rules/doctrine.mdc`, and others), so back them up first.
 
 **1. Back up your current agent config.**
