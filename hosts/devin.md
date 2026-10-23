@@ -16,7 +16,7 @@ devin's own testing agent shares this machine and this checkout. use it for ui-d
 
 ## checkout isolation
 
-devin clones each repository once under `~/repos/<name>`. keep that checkout on `main` and add a worktree for feature work: `git worktree add ~/repos/<name>-kp-<kebab> -b kp-<kebab> origin/main`.
+devin clones each repository once under `~/repos/<name>`. keep that checkout on `main` and add a worktree for feature work: `git worktree add ~/repos/<name>-agent-<kebab> -b agent-<kebab> origin/main`.
 
 ## pull requests
 

@@ -1,30 +1,57 @@
-# agent-doctrine
+<p align="center">
+  <img src=".github/assets/banner.png" width="640" alt="agent-doctrine: dithered pixel art of a lead node dispatching to three agents above an open book with a check mark">
+</p>
 
-A personal operating doctrine for working with AI agents, published by [sisig-ai](https://github.com/sisig-ai).
+<h1 align="center">agent-doctrine</h1>
 
-Make the smallest correct change. Bound its effects. Prove the result on representative data. Explain every regression. Keep the user informed and carry authorized work through to completion.
+<p align="center">
+  <strong>A shared operating doctrine that takes coding agents from spec to a tested PR.</strong>
+</p>
 
-The operating loop is **scout → gate → plan → implement → review → consolidate → verify → ship**. Fast mode keeps the written gate and diff review. Rigorous mode adds simplification, adversarial plan review, and human approval.
+<p align="center">
+  <a href="#whats-in-the-repo"><img src="https://img.shields.io/badge/hosts-7-171914?style=flat-square" alt="hosts: 7"></a>
+  <a href="https://bun.sh/"><img src="https://img.shields.io/badge/runtime-bun-171914?style=flat-square" alt="runtime: bun"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/sisig-ai/agent-doctrine?style=flat-square" alt="License"></a>
+</p>
 
-## Start with the doctrine
+<p align="center">
+  <a href="#whats-this-for">What's this for?</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#optional-services-honcho-and-porch">Honcho and Porch</a> ·
+  <a href="#development">Development</a>
+</p>
 
-| File | Purpose |
-| --- | --- |
-| [CLAUDE.md](CLAUDE.md) | Shared role, communication style, autonomy, and operating loop |
-| [TENETS.md](TENETS.md) | Four engineering tenets and the fifteen-question pre-code gate |
-| [TASTE.md](TASTE.md) | Working preferences to adapt to your own practice |
-| [HANDOFFS.md](HANDOFFS.md) | Specs, reviews, stories, and delegation contracts |
-| [hosts/](hosts/) | Host-specific mechanics |
-| [delegation.toml](delegation.toml) | Model and runtime bindings for each role |
-| [skills/](skills/) | Repeatable steps in the engineering loop |
+agent-doctrine is a set of instructions, role prompts, and skills that one sync installs into Claude Code, Codex, Cursor, OpenCode, Grok, Muse, and Amp. Every agent on the machine then follows the same loop: **scout → gate → plan → implement → review → consolidate → verify → ship**.
 
-The filename `CLAUDE.md` is historical; its policy is shared across hosts. Adapters cover Claude, Codex, Cursor, OpenCode, Grok, Muse, and Amp. Devin has a manual host guide. Model bindings are editable examples and depend on your provider access.
+## What's this for?
 
-This is an opinionated starting point. Read it, copy the parts you want, and customize the style, tools, approval boundaries, and models. Host overlays expect specific capabilities; installation does not create provider accounts or grant access to them. Porch is the default shared handoff store; a declared local mode is also supported. Honcho is optional memory. No service account or credentials are included.
+> It's easy to ship code with AI, but shipping well-vetted and well-tested code is a whole different beast altogether. This repo is an encapsulation of over a year's worth of base workflows, prompts, and skills that have been continuously refined and iterated on to allow our AI agents to ship tested work confidently. This allows us to write a spec - dispatch to an AI agent - which will then dispatch to its own team - and return with a well-tested PR ready for final human approval.
+>
+> — Kix, [sisig-ai](https://github.com/sisig-ai)
 
-## Install doctrine only
+In practice, the doctrine gives each agent:
 
-Requires Git and Bun. Existing agent instructions and hooks can be changed by installation, so review and back up your local configuration first.
+- A role. The agent you talk to is the lead. It plans, delegates, reviews, and ships. It does not hand-write the code unless you tell it to.
+- A pre-code gate. Before any edit, the lead answers fifteen questions from [TENETS.md](TENETS.md) in the transcript, with evidence: smallest correct change, blast radius, how to prove it on real data, how to verify it.
+- A team. `scout` reads the codebase, `implementer` builds each split of the plan, `simplifier` cuts the plan down, and `adv_review` tries to break the diff. [delegation.toml](delegation.toml) binds each role to a model per host.
+- Written handoffs. Specs, reviews, and stories are files with a fixed shape ([HANDOFFS.md](HANDOFFS.md)), so any agent on any host can pick up the work.
+- Two speeds. **Fast** mode keeps the gate and a diff review per split. **Rigorous** mode adds plan simplification, adversarial plan review, and your approval before code.
+- One voice. A shared answer style and a per-prompt style reminder keep replies short and factual on every host.
+
+Use it as-is, or fork it and treat it as a starting point. [TASTE.md](TASTE.md) holds the working preferences you will most likely want to rewrite.
+
+## Quick start
+
+Requires Git and [Bun](https://bun.sh/). Installation rewrites global agent instructions (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.cursor/rules/doctrine.mdc`, and others), so back them up first.
+
+**1. Back up your current agent config.**
+
+```bash
+tar czf ~/agent-config-backup.tgz -C ~ \
+  $(cd ~ && ls -d .claude .codex .cursor .config/opencode .grok .config/muse 2>/dev/null)
+```
+
+**2. Install the doctrine.**
 
 ```bash
 git clone https://github.com/sisig-ai/agent-doctrine.git
@@ -34,9 +61,88 @@ export CLAUDE_MD_DIR="$PWD"
 ./sync.sh apply-snapshot
 ```
 
-`apply-snapshot` installs this checkout without Git pulls or pushes. Legacy `CLAUDE_MD_*` variables and `*-md-sync` names remain supported. For ongoing personal changes, use your own fork and set `CLAUDE_MD_REPO` to its URL. Keep private project memory in a separate private fork.
+`apply-snapshot` installs this checkout into every agent home it finds. It does not pull or push Git.
 
-**Publication boundary:** `sync-*`, reflection apply, and several generator commands can commit and push local changes. Do not point them at the public upstream while importing private preferences or cloud rules. `projects/`, reflection ledgers, local context, and credentials are ignored in this public edition. The project-memory publication workflow is intended for a private fork with its own deliberate tracking policy.
+**3. Write your `LOCAL.md`.** Agents read it at session start. Put machine facts here, and opt out of the services you do not use (see [below](#optional-services-honcho-and-porch)).
+
+```bash
+$EDITOR ~/.claude/LOCAL.md
+./sync.sh reconcile-local   # symlinks the same file into every other agent home
+./sync.sh status
+```
+
+**4. Run your first task.** Open your agent in a project and hand it a spec:
+
+```text
+add a --json flag to the export command. output must match the existing
+csv columns. include tests.
+```
+
+The lead asks `fast or rigorous?`, dispatches a scout, answers the tenets gate in the transcript, writes the spec with its splits, starts one implementer per split, reviews each diff, merges, runs the suite, and comes back with a PR for your approval.
+
+**5. Make it yours.** Edit [TASTE.md](TASTE.md) for your preferences and [delegation.toml](delegation.toml) for the models you have access to. Then regenerate and re-apply:
+
+```bash
+bun run generate
+./sync.sh apply-snapshot
+```
+
+For ongoing personal changes, fork this repo and set `CLAUDE_MD_REPO` to your fork. Keep private project memory in a separate private fork.
+
+**Publication boundary:** `sync-*`, reflection apply, and several generator commands can commit and push local changes. Do not point them at the public upstream while importing private preferences or cloud rules. `projects/`, reflection ledgers, local context, and credentials are ignored in this public edition.
+
+### What's in the repo
+
+| File | Purpose |
+| --- | --- |
+| [CLAUDE.md](CLAUDE.md) | Shared role, answer style, autonomy, and operating loop (the name is historical; every host uses it) |
+| [TENETS.md](TENETS.md) | Four engineering tenets and the fifteen-question pre-code gate |
+| [TASTE.md](TASTE.md) | Working preferences to adapt to your own practice |
+| [HANDOFFS.md](HANDOFFS.md) | Specs, reviews, stories, and delegation contracts |
+| [hosts/](hosts/) | Host-specific mechanics |
+| [delegation.toml](delegation.toml) | Model and runtime bindings for each role |
+| [skills/](skills/) | One skill per step of the engineering loop |
+
+Adapters cover Claude, Codex, Cursor, OpenCode, Grok, Muse, and Amp. Devin has a manual host guide. Model bindings are editable examples and depend on your provider access.
+
+## Optional services: Honcho and Porch
+
+Two hosted services extend the doctrine across machines. Neither is required, and this repo ships no account or credentials for either.
+
+| Service | What it does | Default | Without it |
+| --- | --- | --- | --- |
+| [Honcho](https://honcho.dev) | Shared agent memory across machines and tools | Off unless configured | Agents rely on doctrine files and project memory only |
+| [Porch](https://porch.sh) | Shared store for specs, reviews, stories, and research notes between agents | Default handoff store | Handoffs are local files on this machine |
+| [tokensieve](https://github.com/sisig-ai/tokensieve) | Compresses noisy command output before it reaches the agent | Used when on `PATH` | Agents run the raw command |
+| [semble](https://github.com/MinishLab/semble) | Local code search MCP | Installed by full setup | Agents use built-in grep and file reads |
+
+### Opt out with `LOCAL.md`
+
+`~/.claude/LOCAL.md` is per-machine, never committed, and read by every agent at session start. Declare what this machine does not use:
+
+```markdown
+# local services
+
+- this machine does not require porch. store handoffs as local files.
+- this machine does not use honcho. skip memory recall and memory saves.
+```
+
+Then apply it:
+
+```bash
+./sync.sh reconcile-local
+./sync.sh install-handoff-local    # only if you use OpenCode: installs the local handoff guard
+./sync.sh handoff-capabilities     # reports local handoff support per host
+```
+
+What each line changes:
+
+- `does not require porch` is a marker the tooling checks. With it, handoffs become local files, and each delegation carries one pointer line, `handoff: {"note":"<abs path>"}`. `install-handoff-local` refuses to run without the marker. See rule 11 in [HANDOFFS.md](HANDOFFS.md).
+- `does not use honcho` is an instruction to the agent. The doctrine already treats Honcho as optional; this line stops agents from calling memory tools or reporting Honcho as down. Also leave `HONCHO_API_KEY` and `HONCHO_WORKSPACE` unset, so the MCP wiring skips Honcho.
+
+To turn a service back on, delete its line, export its variables from [SETUP.md](SETUP.md), and run `python3 scripts/wire-mcp.py`.
+
+The full bootstrap (`scripts/machine-setup.sh`) currently requires the Honcho and Porch variables. The doctrine-only quick start above does not.
 
 ## Optional full workstation
 

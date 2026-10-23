@@ -12,7 +12,7 @@ Role choice. When the host's delegation table has `implementer_light`, the lead 
 
 ## splits
 
-start every split's implementation subagent (the role from the role choice above) in the same turn, one call per split, with the model from the delegation table. do not wait for one split to return before you start the next. each prompt is the `HANDOFFS.md` pointer with the `split s<n>` slot. each implementer works only in its own worktree, on its own branch `kp-<slug>-s<n>`, and edits only the files its split owns. an implementer that needs a change in a file it does not own stops and asks the lead. each implementer fixes the blockers of its own split.
+start every split's implementation subagent (the role from the role choice above) in the same turn, one call per split, with the model from the delegation table. do not wait for one split to return before you start the next. each prompt is the `HANDOFFS.md` pointer with the `split s<n>` slot. each implementer works only in its own worktree, on its own branch `agent-<slug>-s<n>`, and edits only the files its split owns. an implementer that needs a change in a file it does not own stops and asks the lead. each implementer fixes the blockers of its own split.
 
 Default authoring path: `implementer` writes the implementation from the spec (approved and simplified in rigorous mode; the lead's plan in fast mode); `adv_review` reviews each split diff adversarially. Only hand-write code yourself when the user explicitly directs it.
 

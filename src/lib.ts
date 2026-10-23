@@ -158,26 +158,7 @@ export function remotePull(): boolean {
   return before !== after;
 }
 
-export function legacyCodexLocalBlock(text: string): string {
-  if (text.includes(BEGIN_MARK)) return "";
-  if (!text.startsWith("HARD RULE - PHIPA")) return "";
-  const cutPoints = ["# Codex Global Instructions", "IMPORTANT - Before proceeding"]
-    .map((marker) => text.indexOf(marker))
-    .filter((idx) => idx > 0);
-  if (!cutPoints.length) return "";
-  const body = text.slice(0, Math.min(...cutPoints)).trim();
-  if (!body) return "";
-  return `<!-- ${BEGIN_MARK} - machine-specific; stripped before sync, never pushed. -->\n\n${body}\n\n<!-- ${END_MARK} -->\n`;
-}
-
 export function stripLocalBlock(text: string, opts?: { allowLegacyCodex?: boolean }): string {
-  const legacy = opts?.allowLegacyCodex ? legacyCodexLocalBlock(text) : "";
-  if (legacy) {
-    if (text.includes("IMPORTANT - Before proceeding")) {
-      return text.slice(text.indexOf("IMPORTANT - Before proceeding")).replace(/^\n+/, "");
-    }
-    return text;
-  }
   const lines = text.split(/(?<=\n)/);
   const out: string[] = [];
   let skipping = false;
@@ -196,8 +177,6 @@ export function stripLocalBlock(text: string, opts?: { allowLegacyCodex?: boolea
 }
 
 export function extractLocalBlock(text: string, opts?: { allowLegacyCodex?: boolean }): string {
-  const legacy = opts?.allowLegacyCodex ? legacyCodexLocalBlock(text) : "";
-  if (legacy) return legacy;
   const lines = text.split(/(?<=\n)/);
   const out: string[] = [];
   let copying = false;

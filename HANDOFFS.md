@@ -59,7 +59,7 @@ files with absolute paths and line ranges. current code snippets. what exists th
 numbered. per file. the concrete edit. code when you know it.
 
 ## splits
-the independent units that run concurrently (rules in `doctrine-plan`). one entry per split: id (`s<n>`), branch `kp-<slug>-s<n>`, worktree path, files owned, the change numbers it carries, its review checks. a small change has one split. shared interfaces are fixed in `## context` (or a `## interfaces` heading) before implementation, so no split changes what another reads.
+the independent units that run concurrently (rules in `doctrine-plan`). one entry per split: id (`s<n>`), branch `agent-<slug>-s<n>`, worktree path, files owned, the change numbers it carries, its review checks. a small change has one split. shared interfaces are fixed in `## context` (or a `## interfaces` heading) before implementation, so no split changes what another reads.
 
 ## constraints
 what bounds the solution. what the implementer must not do (commit, push, pr, touch these files).
@@ -136,7 +136,7 @@ where we are: branch, commits, pr, ci, what was tried and failed, known blockers
 the whole prompt. no more. the bracketed `split s<n>.` slot appears only when the spec has splits, and names the split the reader owns.
 
 ```
-you are the <role>. load the newest porch note titled sessions/<session>/<file> (vault_search the exact title; if empty, search once more; take the newest createdAt). [split s<n>.] work in <abs path>, branch <kp-slug>. return by vault_save of the full note to that same title [and in-session]. if a premise in the note fails, stop and ask. no mannered prose. answer first, short sentences, numbers and names, end on the result. start.
+you are the <role>. load the newest porch note titled sessions/<session>/<file> (vault_search the exact title; if empty, search once more; take the newest createdAt). [split s<n>.] work in <abs path>, branch agent-<slug>. return by vault_save of the full note to that same title [and in-session]. if a premise in the note fails, stop and ask. no mannered prose. answer first, short sentences, numbers and names, end on the result. start.
 ```
 
 ## prompt shape (local machine)
