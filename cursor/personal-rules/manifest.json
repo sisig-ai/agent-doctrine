@@ -8,8 +8,8 @@
     },
     {
       "slug": "async-substance-not-theater",
-      "content": "On long-running work, manage jobs in the background and report substance \u2014 not status theater. He will ping \"update?\" while jobs run; answer with real progress, evidence, or blockers.",
-      "sha256": "3f31bed48f8466c886ebba3333c9e1fd60c0b62e326683d5440ce7afed04c77a"
+      "content": "On long-running work, manage jobs in the background and report substance \u2014 not status theater. The user may ask for updates while jobs run; answer with real progress, evidence, or blockers.",
+      "sha256": "0940702de76ecb36237272d3b8bad1eab2afd606a392106e3693fd8aed6d28b8"
     },
     {
       "slug": "cli-agents-detached-background",
@@ -24,12 +24,12 @@
     {
       "slug": "doctrine-no-exemptions",
       "content": "Any code change (edit/create/delete of source, config, or tests) must follow the full doctrine sequence with **no size-based exemptions**: (1) full session-start reads of TASTE/TENETS/LOCAL without Read `limit`/`offset`, (2) scout: write the brief and dispatch `scout` first, read the findings (skill: `doctrine-scout`), (3) all fifteen TENETS gate answers **written in the transcript** before the first edit (skill: `doctrine-plan`), (4) plan loop with splits (skill: `doctrine-plan`) \u2014 rigorous: plan \u2192 simplifier \u2192 adv_review \u2192 the user approval; fast: plan \u2192 implementer directly, (5) `implementer` writes the code, one per split, concurrently (hand-write only if the user explicitly directs; skill: `doctrine-implement`), (6) `adv_review` on each split diff (skill: `doctrine-review`), (7) consolidate the split branches (skill: `doctrine-consolidate`), (8) verify, then ship (skill: `doctrine-ship`). The mode covers the plan-level reviews and approval only. Ask the user `fast or rigorous?` at session start; assume fast unless the user says otherwise. \"Small\", \"obvious\", \"staff-only\", \"UI-only\", \"cloud/background agent\", and \"high autonomy\" do not waive any step. Autonomy chooses solutions *inside* the loop \u2014 it is not permission to skip it. If you are about to edit and the gate answers + spec are not already in the transcript, stop.",
-      "sha256": "a661df3c362586c5ad1b125333d276f78455d8b8b4e0108ca99ed717f16e0225"
+      "sha256": "31ce2e14f003ff507b0b85ed3cca728e2581edc5a7a91e03cce394032cdaf744"
     },
     {
       "slug": "hypothesis-first-dialogue",
-      "content": "Treat the user's framings as hypotheses to test, not instructions to execute. He often opens with a guess and invites verification or a better idea. Disagree with reasons when warranted; yes-man behavior is a failure mode.",
-      "sha256": "a25f6a63590cd624f712485d729895025a08c735aa8c5ac41c594e8d7da74cf3"
+      "content": "Treat the user's framings as hypotheses to test, not instructions to execute. The user often opens with a guess and invites verification or a better idea. Disagree with reasons when warranted; yes-man behavior is a failure mode.",
+      "sha256": "372ee9b86b91c0b4351f838eb3419579233b6a4357db892dfe068368d2f665ff"
     },
     {
       "slug": "match-narrow-scope-literally",
@@ -58,8 +58,8 @@
     },
     {
       "slug": "worktrees-default",
-      "content": "Always work in a git worktree unless the user explicitly says to use the primary checkout. Create `git worktree add .claude/worktrees/kp-<kebab> -b kp-<kebab> origin/main` and do all edits, tests, and commits there. Keep `main` in the primary checkout. Do not edit the primary working tree for feature work.",
-      "sha256": "e0214b6ce2bedda2ff9c18732b114da75c5be58e56e986e1b5aa6a60597c43ea"
+      "content": "Always work in a git worktree unless the user explicitly says to use the primary checkout. Create `git worktree add .claude/worktrees/agent-<kebab> -b agent-<kebab> origin/main` and do all edits, tests, and commits there. Keep `main` in the primary checkout. Do not edit the primary working tree for feature work.",
+      "sha256": "e64b092e597836582be61839d578bea85b51c33974ee4f5893ebec912a1600d0"
     }
   ]
 }

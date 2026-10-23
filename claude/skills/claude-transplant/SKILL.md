@@ -1,6 +1,6 @@
 ---
 name: claude-transplant
-description: Move the current session's work into a fresh Claude CLI session with Remote Control enabled, so the user can drive it from claude.ai or his phone. Use when he says "transplant your consciousness", "continue this in claude cli", "spawn a claude cli agent with remote control", or "hand this off to a remote-control session". Writes a full handoff brief, launches the CLI detached in tmux, delivers the brief, verifies the successor is working, and returns the session URL.
+description: Move the current session's work into a fresh Claude CLI session with Remote Control enabled, so the user can drive it from claude.ai or a phone. Use when the user says "transplant your consciousness", "continue this in claude cli", "spawn a claude cli agent with remote control", or "hand this off to a remote-control session". Writes a full handoff brief, launches the CLI detached in tmux, delivers the brief, verifies the successor is working, and returns the session URL.
 ---
 
 # claude transplant
@@ -56,7 +56,7 @@ tmux send-keys -t <name> Enter
 
 the prompt should match `HANDOFFS.md` `## prompt shape` — porch title, working directory, branch — or, for this transplant-only bootstrap, stay short and point at the porch title:
 
-> you are the continuation of <work>. the user moved the work here so he can drive it from remote control. FIRST load the newest porch note titled `sessions/<session>/story-<slug>.md` (`vault_search` the exact title; if empty, search once more; take the newest `createdAt`) in full — it carries the whole context. THEN read TASTE.md / TENETS.md / LOCAL.md in full. <the task in one or two sentences, with stop conditions>. <the two or three rules that override convenience>. <the one thing to resolve before anything else, and the instruction to stop and ask rather than improvise if it fails>. start now.
+> you are the continuation of <work>. the user moved the work here so they can drive it from remote control. FIRST load the newest porch note titled `sessions/<session>/story-<slug>.md` (`vault_search` the exact title; if empty, search once more; take the newest `createdAt`) in full — it carries the whole context. THEN read TASTE.md / TENETS.md / LOCAL.md in full. <the task in one or two sentences, with stop conditions>. <the two or three rules that override convenience>. <the one thing to resolve before anything else, and the instruction to stop and ask rather than improvise if it fails>. start now.
 
 the standing fix for the held-message path is `"crossSessionInbound": "accept"` in `~/.claude/settings.json` (see CLAUDE.md, session harness settings). settings load at startup, so sessions already running when it was set still hold. the tmux fallback always works.
 
@@ -66,7 +66,7 @@ capture the pane once more and check the successor is running tools, not idle. t
 
 - the session url
 - what the successor is doing right now
-- what the handoff carries, so he knows what he does not need to re-explain
+- what the handoff carries, so the user knows what they do not need to re-explain
 - any stale notice left in its scrollback (a held message that is now redundant), so it does not read as a fault
 
 ## rules
