@@ -27,7 +27,7 @@ plan the work as independent splits that run concurrently.
 - at most 3 splits. more only when the complexity calls for it or the change spans many files, and the spec says why. one split is fine for a small change.
 - each split owns a disjoint set of files. no file is in two splits.
 - a split may not change an interface (function signature, schema key, file name, cli flag) that another split reads. the spec fixes shared interfaces before implementation.
-- each split runs in its own git worktree on branch `kp-<slug>-s<n>` off the same base commit. the lead creates the worktrees.
+- each split runs in its own git worktree on branch `agent-<slug>-s<n>` off the same base commit. the lead creates the worktrees.
 - one spec file holds all splits under `## splits`. each split gets its own review file `review-<slug>-s<n>.md`.
 - all splits must be sound before consolidation (`doctrine-consolidate`).
 
