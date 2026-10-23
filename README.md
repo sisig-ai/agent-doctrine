@@ -16,6 +16,7 @@
 
 <p align="center">
   <a href="#whats-this-for">What's this for?</a> ·
+  <a href="#how-it-works">How it works</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#optional-services-honcho-and-porch">Honcho and Porch</a> ·
   <a href="#development">Development</a>
@@ -47,6 +48,30 @@ This repo is heavily opinionated. One of its goals is AI-written prose that does
 The same opinions cover engineering: a written gate before code, the smallest correct change, and proof on real data.
 
 Use it as-is, or fork it and treat it as a starting point. [TASTE.md](TASTE.md) holds the working preferences you will most likely want to rewrite.
+
+## How it works
+
+<p align="center"><img src=".github/assets/diagrams/loop.png" width="880" alt="The engineering loop: session start, scout, tenets gate, spec with splits, implement, diff review, consolidate, ship. Rigorous mode adds simplifier, adversarial plan review, and approval between spec and implement. Diff review blockers return to implement."></p>
+
+<p align="center"><img src=".github/assets/diagrams/team.png" width="880" alt="The team: you talk to the lead, which starts scout, simplifier, adv_review, implementer, and implementer_light as subagents. adv_review sends blockers back to the implementers."></p>
+
+| Role | Claude | Codex | Cursor |
+| --- | --- | --- | --- |
+| scout | claude-haiku-5-5 | gpt-6-luna | composer-2.5 |
+| simplifier | claude-opus-5-5 | gpt-6.1-sol | cursor-grok-4.7-high |
+| adv_review | claude-opus-5-5 | gpt-6.1-sol | cursor-grok-4.7-high |
+| implementer | claude-sonnet-5-5 | gpt-6.1-sol | composer-2.5 |
+| implementer_light | claude-haiku-5-5 | uses implementer | uses implementer |
+
+OpenCode, Grok, and Muse bindings are in [delegation.toml](delegation.toml). Edit the file, then run `./sync.sh generate-delegation`.
+
+<p align="center"><img src=".github/assets/diagrams/handoffs.png" width="880" alt="Delegation through notes: the lead writes the spec to a note, sends pointer lines to the implementer and adv_review, both append results to the notes, review repeats until sound, then the lead merges, verifies, and returns a PR."></p>
+
+<p align="center"><img src=".github/assets/diagrams/splits.png" width="880" alt="Splits: one spec fans out to three worktrees, each with its own review, merged with no-ff and a full test suite into one PR."></p>
+
+<p align="center"><img src=".github/assets/diagrams/sync.png" width="880" alt="Doctrine sync: CLAUDE, TASTE, TENETS, host overlays, delegation.toml, agents and skills feed the generators, which write claude, codex, cursor, opencode, grok, muse, and amp. LOCAL.md is symlinked per machine."></p>
+
+<p align="center"><img src=".github/assets/diagrams/memory.png" width="880" alt="Memory: reflection turns agent notes into a reviewed patch for CLAUDE.md and TASTE.md plus a ledger; project memory three-way merges per-project notes with a private fork; Honcho is optional live recall."></p>
 
 ## Quick start
 
