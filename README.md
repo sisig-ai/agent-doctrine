@@ -34,7 +34,17 @@ In practice, the doctrine gives each agent:
 - A team. `scout` reads the codebase, `implementer` builds each split of the plan, `simplifier` cuts the plan down, and `adv_review` tries to break the diff. [delegation.toml](delegation.toml) binds each role to a model per host.
 - Written handoffs. Specs, reviews, and stories are files with a fixed shape ([HANDOFFS.md](HANDOFFS.md)), so any agent on any host can pick up the work.
 - Two speeds. **Fast** mode keeps the gate and a diff review per split. **Rigorous** mode adds plan simplification, adversarial plan review, and your approval before code.
-- One voice. A shared answer style and a per-prompt style reminder keep replies short and factual on every host.
+- One voice. A shared answer style and a per-prompt style reminder apply to every reply, spec, review, PR body, commit message, and code comment, on every host.
+
+This repo is heavily opinionated. One of its goals is AI-written prose that does not read as AI slop. The answer style in [CLAUDE.md](CLAUDE.md) requires:
+
+- Simplified technical English (ASD-STE100): one meaning per word, one idea per sentence, 8 to 20 words per sentence, active voice.
+- The answer first, then the facts, then a stop. No recaps, no closing offers, no praise or apologies.
+- A number, file, name, or decision in each claim.
+- Literal words. No metaphors or analogies when a plain phrase works, and no stock words such as "robust", "seamless", "leverage", or "delve".
+- No em dashes.
+
+The same opinions cover engineering: a written gate before code, the smallest correct change, and proof on real data.
 
 Use it as-is, or fork it and treat it as a starting point. [TASTE.md](TASTE.md) holds the working preferences you will most likely want to rewrite.
 
