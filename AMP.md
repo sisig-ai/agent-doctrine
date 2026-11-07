@@ -24,13 +24,13 @@ the local plugin `~/.config/amp/plugins/style-reminder` appends `~/.config/amp/s
 
 shared doctrine owns the required workflow and role behavior. this file owns amp invocation mechanics.
 
-read `HANDOFFS.md` from the repository checkout root before you write or receive a handoff.
+read `HANDOFFS.md` from the repository checkout root before you write or receive a handoff, then load `skills/agent-handoffs/SKILL.md` and its references for formats and prompts.
 
 run scout, simplifier, adv_review, and implementer as direct subagents with amp's built-in `task` tool. do not use a plugin delegate, `create_thread`, an agent mode, or an external cli for these roles.
 
 run scout first, before the gate, with amp's `task` tool and its default model. the loop is scout, gate, plan with splits, one implementer per split, all started in the same turn, one adv_review per split, consolidate, ship.
 
-context-feed each task subagent with the exact goal, constraints, relevant files and lines, and current plan or diff. scout reports facts only. the simplifier reviews plans only. the implementer writes the approved change and fixes review blockers. the adv_review subagent reviews plans and diffs and must append a round in the `HANDOFFS.md` review format.
+context-feed each task subagent with the exact goal, constraints, relevant files and lines, and current plan or diff. scout reports facts only. the simplifier reviews plans only. the implementer writes the approved change and fixes review blockers. the adv_review subagent reviews plans and diffs and must append a round in the `agent-handoffs` review format.
 
 amp has no skill tool for the loop skills. read a loop skill from `~/.claude/skills/<name>/SKILL.md`, in full, before its step, and read `doctrine-review` before each adv_review task call.
 
