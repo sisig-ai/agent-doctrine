@@ -12,13 +12,13 @@ order: scout findings first (`doctrine-scout`), then the gate, then the spec wit
 
 ## step 3: tenets gate
 
-answer all fifteen questions in `TENETS.md` **in the transcript**, with evidence. mental clearance is invalid. the lead writes the gate after the scout returns and before the plan loop, and carries it into the brief so the implementer clears it too. required in both modes.
+answer all fifteen questions in `references/tenets-gate.md` **in the transcript**, with evidence. mental clearance is invalid. the lead writes the gate after the scout returns and before the plan loop, and carries it into the brief so the implementer clears it too. required in both modes.
 
 ## step 4: plan with splits
 
 ### write the spec
 
-write the spec to porch (`sessions/<session>/spec-<slug>.md`). read `HANDOFFS.md` from the current host's doctrine location in full before you write it. the spec status line reads `status: fast by lead <date>` or `status: approved by the user <date>`.
+write the spec to porch (`sessions/<session>/spec-<slug>.md`). load `agent-handoffs` and read `../agent-handoffs/references/handoff-formats.md` before you write it. the spec status line reads `status: fast by lead <date>` or `status: approved by the user <date>`.
 
 ### splits
 
@@ -44,7 +44,7 @@ The plan loop follows the session mode set at session start.
 
 **Rigorous mode.** Before surfacing any plan to the user: (1) write the spec file, (2) start `simplifier` as a subagent on it to strip it to the smallest-correct change and drop speculative scope, fold in the simplifications you accept, then (3) start `adv_review` as a subagent on the simplified plan (`doctrine-review`) for 2 to 3 turns of adversarial review with the current host's required review mechanism. Point `adv_review` at the spec, whole, including the split boundaries; it already carries files, line ranges, current code, and diffs, so the reviewer critiques rather than hunts; default to medium reasoning effort, bumping to high only for genuinely subtle plans. Brief `adv_review` to be critical but helpful, adversarial in service of the plan, not contrarian for sport. Focus on blockers (correctness, architecture, missed constraints, hidden coupling, wrong abstraction, broken assumptions). Charge `adv_review` to pursue aggressive simplification as a first-class tenet equal to correctness, the smaller correct changeset (fewer files, endpoints, abstractions, less new code/state/deps, reuse what exists) that still delivers the ask; unnecessary complexity is itself a blocker, not a nitpick.
 
-`adv_review` appends a round to the review file in the `HANDOFFS.md` format: `### blockers`, `### nitpicks`, `### others` under `## round <n>`, never blended. If it blends them, push back and ask for the split.
+`adv_review` appends a round to the review file in the `agent-handoffs` review format: `### blockers`, `### nitpicks`, `### others` under `## round <n>`, never blended. If it blends them, push back and ask for the split.
 
 Iterate until `adv_review` agrees the plan is sound. Only then surface it to the user. If `adv_review` raises a blocker you disagree with, argue it out with `adv_review` first; do not punt the disagreement up to the user unprocessed.
 

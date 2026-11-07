@@ -12,8 +12,8 @@ you are the **lead**. scout runs first. no gate answer and no plan exists before
 
 ## procedure
 
-1. write the brief as a porch spec note: `sessions/<session>/spec-scout-<slug>.md`. it is a reduced spec (see `## spec` in `HANDOFFS.md`): status line, scope, from, `## goal`, `## context`, numbered questions (one fact each), and `## return`. it has no `## gate`, because the gate comes after the scout. add the paths, branch, and prior notes you already know. read `HANDOFFS.md` from the current host's doctrine location in full before you write it.
-2. start `scout` as a subagent with the prompt in `HANDOFFS.md` (`## prompt shape`, rule 1). the prompt carries nothing else.
+1. write the brief as a porch spec note: `sessions/<session>/spec-scout-<slug>.md`. it is a reduced spec (see `## spec` in `../agent-handoffs/references/handoff-formats.md`): status line, scope, from, `## goal`, `## context`, numbered questions (one fact each), and `## return`. it has no `## gate`, because the gate comes after the scout. add the paths, branch, and prior notes you already know. load `agent-handoffs` before you write it.
+2. start `scout` as a subagent with the prompt in `../agent-handoffs/references/handoff-formats.md` (`## prompt shape`, rule 1). the prompt carries nothing else.
 3. scout returns `sessions/<session>/findings-<slug>.md`. load the newest version and read it in full.
 4. check the premises you can check (file:line still true, branch exists). then write the tenets gate (`doctrine-plan`).
 
