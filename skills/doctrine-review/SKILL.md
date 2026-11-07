@@ -21,7 +21,7 @@ run one `adv_review` per split, on the split diff (`git diff <base>...HEAD` on t
 
 1. read the current host overlay and the generated delegation binding in the delegation table.
 2. start `adv_review` as a subagent, with the model from the delegation table.
-3. point it at the spec (`sessions/<session>/spec-<slug>.md`); for a later round, tell it to start from the spec's `## log` delta. require a round appended to `sessions/<session>/review-<slug>.md` in the `HANDOFFS.md` review format, read from the current host's doctrine location (`### blockers` / `### nitpicks` / `### others`, explicit `none` when empty).
+3. point it at the spec (`sessions/<session>/spec-<slug>.md`); for a later round, tell it to start from the spec's `## log` delta. require a round appended to `sessions/<session>/review-<slug>.md` in the `agent-handoffs` review format (`### blockers` / `### nitpicks` / `### others`, explicit `none` when empty).
 4. write the host-required `runtime:` line in the transcript first.
 5. triage. argue blockers with the reviewer before surfacing unresolved disagreement to the user.
 

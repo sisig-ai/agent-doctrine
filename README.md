@@ -31,9 +31,9 @@ agent-doctrine is a set of instructions, role prompts, and skills that one sync 
 In practice, the doctrine gives each agent:
 
 - A role. The agent you talk to is the lead. It plans, delegates, reviews, and ships. It does not hand-write the code unless you tell it to.
-- A pre-code gate. Before any edit, the lead answers fifteen questions from [TENETS.md](TENETS.md) in the transcript, with evidence: smallest correct change, blast radius, how to prove it on real data, how to verify it.
+- A pre-code gate. Before any edit, the lead answers fifteen questions from [skills/doctrine-plan/references/tenets-gate.md](skills/doctrine-plan/references/tenets-gate.md) in the transcript, with evidence: smallest correct change, blast radius, how to prove it on real data, how to verify it.
 - A team. `scout` reads the codebase, `implementer` builds each split of the plan, `simplifier` cuts the plan down, and `adv_review` tries to break the diff. [delegation.toml](delegation.toml) binds each role to a model per host.
-- Written handoffs. Specs, reviews, and stories are files with a fixed shape ([HANDOFFS.md](HANDOFFS.md)), so any agent on any host can pick up the work.
+- Written handoffs. Specs, reviews, and stories are files with a fixed shape ([skills/agent-handoffs/references/handoff-formats.md](skills/agent-handoffs/references/handoff-formats.md)), so any agent on any host can pick up the work.
 - Two speeds. **Fast** mode keeps the gate and a diff review per split. **Rigorous** mode adds plan simplification, adversarial plan review, and your approval before code.
 - One voice. A shared answer style and a per-prompt style reminder apply to every reply, spec, review, PR body, commit message, and code comment, on every host.
 
@@ -160,7 +160,7 @@ add a --json flag to the export command. output must match the existing
 csv columns. include tests.
 ```
 
-The lead asks `fast or rigorous?`, dispatches a scout, answers the tenets gate in the transcript, writes the spec with its splits, starts one implementer per split, reviews each diff, merges, runs the suite, and comes back with a PR for your approval.
+The lead asks `fast or rigorous?`, dispatches a scout, answers the tenets gate in the transcript, writes the spec with its splits, starts one implementer per split, reviews each diff, merges, runs the suite, and comes back with a PR for your approval. Load `skills/development-loop/SKILL.md` for the eight steps.
 
 **5. Make it yours.** Edit [TASTE.md](TASTE.md) for your preferences and [delegation.toml](delegation.toml) for the models you have access to. Then regenerate and re-apply:
 
@@ -178,9 +178,9 @@ For ongoing personal changes, fork this repo and set `CLAUDE_MD_REPO` to your fo
 | File | Purpose |
 | --- | --- |
 | [CLAUDE.md](CLAUDE.md) | Shared role, answer style, autonomy, and operating loop (the name is historical; every host uses it) |
-| [TENETS.md](TENETS.md) | Four engineering tenets and the fifteen-question pre-code gate |
+| [TENETS.md](TENETS.md) | Router to the fifteen-question pre-code gate in `skills/doctrine-plan/references/tenets-gate.md` |
 | [TASTE.md](TASTE.md) | Working preferences to adapt to your own practice |
-| [HANDOFFS.md](HANDOFFS.md) | Specs, reviews, stories, and delegation contracts |
+| [HANDOFFS.md](HANDOFFS.md) | Router to handoff formats in `skills/agent-handoffs/`; delegation contracts |
 | [hosts/](hosts/) | Host-specific mechanics |
 | [delegation.toml](delegation.toml) | Model and runtime bindings for each role |
 | [skills/](skills/) | One skill per step of the engineering loop |
@@ -219,7 +219,7 @@ Then apply it:
 
 What each line changes:
 
-- `does not require porch` is a marker the tooling checks. With it, handoffs become local files, and each delegation carries one pointer line, `handoff: {"note":"<abs path>"}`. `install-handoff-local` refuses to run without the marker. See rule 11 in [HANDOFFS.md](HANDOFFS.md).
+- `does not require porch` is a marker the tooling checks. With it, handoffs become local files, and each delegation carries one pointer line, `handoff: {"note":"<abs path>"}`. `install-handoff-local` refuses to run without the marker. See rule 11 in [skills/agent-handoffs/references/local-receipts.md](skills/agent-handoffs/references/local-receipts.md).
 - `does not use honcho` is an instruction to the agent. The doctrine already treats Honcho as optional; this line stops agents from calling memory tools or reporting Honcho as down. Also leave `HONCHO_API_KEY` and `HONCHO_WORKSPACE` unset, so the MCP wiring skips Honcho.
 
 To turn a service back on, delete its line, export its variables from [SETUP.md](SETUP.md), and run `python3 scripts/wire-mcp.py`.
