@@ -32,6 +32,9 @@ the review file is the deliverable, native or CLI. the reviewer appends a round;
 - point `adv_review` at the spec; it already carries files, line ranges, current code, and diffs, so the reviewer critiques rather than hunts. default to medium reasoning effort, bumping to high only for genuinely subtle work.
 - brief `adv_review` to be critical but helpful, adversarial in service of the work, not contrarian for sport.
 - focus on blockers (correctness, architecture, missed constraints, hidden coupling, wrong abstraction, broken assumptions).
+- reviewers audit the tests: coverage of changed behavior and failure cases, the exact run, and its result. rerun the stated test command and compare the result.
+- reviewers audit the proof: real exercise of the written code path, mapped to each definition-of-done number, reproduced when cheap and safe. missing, stale, synthetic-only, or unreproducible proof is a blocker.
+- unearned complexity, missing or weak tests, and missing or invalid proof block.
 - charge `adv_review` to pursue aggressive simplification as a first-class tenet equal to correctness: the smaller correct changeset (fewer files, endpoints, abstractions, less new code/state/deps, reuse what exists) that still delivers the ask. unnecessary complexity is itself a blocker, not a nitpick.
 - `adv_review` appends a round with `### blockers`, `### nitpicks`, `### others` under `## round <n>`, never blended. if it blends them, push back and ask for the split.
 

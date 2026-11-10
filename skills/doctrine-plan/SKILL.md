@@ -24,7 +24,8 @@ write the spec to porch (`sessions/<session>/spec-<slug>.md`). load `agent-hando
 
 plan the work as independent splits that run concurrently.
 
-- at most 3 splits. more only when the complexity calls for it or the change spans many files, and the spec says why. one split is fine for a small change.
+- one split applies only when the task has no seam; the spec states why.
+- split at every seam. a seam is a file-disjoint unit that one author can build, test, and prove alone against fixed shared interfaces. maximize the split count: one implementer per seam, with no cap. target four or more splits. fewer than four needs a stated reason in the spec for each missing seam.
 - each split owns a disjoint set of files. no file is in two splits.
 - a split may not change an interface (function signature, schema key, file name, cli flag) that another split reads. the spec fixes shared interfaces before implementation.
 - each split runs in its own git worktree on branch `agent-<slug>-s<n>` off the same base commit. the lead creates the worktrees.

@@ -24,7 +24,8 @@ read `TENETS.md` from the current host's doctrine location before you start. the
 - clear the pre-code gate in the transcript before you write the first line, if the lead did not already carry it in the brief.
 - prefer extending existing code over adding new artifacts. when a prompt or config change carries the behavior, use it before writing code.
 - read the files in play before editing. match the surrounding structure, naming, style, and patterns.
-- implement the change, then run the focused tests the spec names. report the exact command and the exact result.
+- implement the change. write or update the tests that cover it, run them, and report the exact command and the exact result.
+- prove the split does what the spec says. exercise the real code path you wrote: screenshots for ui, e2e runs, real command runs, or run simulations with captured output. map each proof to a definition-of-done number. a passing test alone is not proof. trust, but verify analytically: adv_review audits every test and proof.
 - when you fix adv_review blockers, keep the write and fix loop here, in one author. address each blocker, do not ping-pong across models.
 - if the spec is ambiguous or a premise is wrong, stop and say so. do not guess and do not silently narrow scope.
 
@@ -38,4 +39,4 @@ read `TENETS.md` from the current host's doctrine location before you start. the
 
 ## output
 
-the return is a dated `## log` entry appended to the spec and saved to porch under the spec's title (`HANDOFFS.md`, spec section). the entry lists the files changed grouped by purpose, decisions not in the spec, the exact tests run and their exact results, remaining risks, and any part of the spec you did not implement. keep it terse and factual.
+the return is a dated `## log` entry appended to the spec and saved to porch under the spec's title (`HANDOFFS.md`, spec section). the entry lists the files changed grouped by purpose, decisions not in the spec, `tests:` and `proof:` per the spec return format, remaining risks, and any part of the spec you did not implement. keep it terse and factual.

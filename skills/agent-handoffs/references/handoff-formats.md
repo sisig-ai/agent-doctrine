@@ -31,7 +31,7 @@ files with absolute paths and line ranges. current code snippets. what exists th
 numbered. per file. the concrete edit. code when you know it.
 
 ## splits
-the independent units that run concurrently (rules in `doctrine-plan`). one entry per split: id (`s<n>`), branch `agent-<slug>-s<n>`, worktree path, files owned, the change numbers it carries, its review checks. a small change has one split. shared interfaces are fixed in `## context` (or a `## interfaces` heading) before implementation, so no split changes what another reads.
+the independent units that run concurrently, one per seam (rules in `doctrine-plan`). one entry per split: id (`s<n>`), branch `agent-<slug>-s<n>`, worktree path, files owned, the change numbers it carries, its review checks and exact review destination. one split applies only when the task has no seam. shared interfaces are fixed in `## context` (or a `## interfaces` heading) before implementation, so no split changes what another reads.
 
 ## constraints
 what bounds the solution. what the implementer must not do (commit, push, pr, touch these files).
@@ -40,13 +40,13 @@ what bounds the solution. what the implementer must not do (commit, push, pr, to
 files and areas not to touch. questions not to answer.
 
 ## validation
-exact commands and expected results, each keyed to a definition-of-done number. the real-data e2e (workspace, container). the eval baseline run id, or why no build output can change. say if a rebuild would be needed (then stop and ask).
+exact commands and expected results, each keyed to a definition-of-done number. the real-data e2e (workspace, container). the eval baseline run id, or why no build output can change. say if a rebuild would be needed (then stop and ask). each split names its own tests and the proof its implementer must produce.
 
 ## review
 what the reviewer reads (this file; the diff range on the branch). numbered checks: concrete concerns, invariants, cross-file consistency. 6-12 items.
 
 ## return
-what the implementer reports: a `## log` entry (files changed, decisions not in this spec, test output) and, for an external cli, the porch note `sessions/<session>/agent-notes-<id>.md`.
+what the implementer reports: a `## log` entry with files changed, decisions not in this spec, `tests:` (test files written, exact command, exact result) and `proof:` (one item per definition-of-done number: the artifact that exercises the written code path, plus what it does not prove), and, for an external cli, the porch note `sessions/<session>/agent-notes-<id>.md`.
 
 ## log
 append-only. one entry per event, newest last: `- <date> <role, model>: <what changed or happened>`. approval, each review round folded (sections changed + finding ids answered), implementer start and final, lead decisions, re-approvals. this is the delta a reviewer reads before the next round.
@@ -79,7 +79,7 @@ verdict: sound | not yet, <n> blockers, <n> nitpicks. premises checked | premise
 everything that is not a finding. adv_review: confirmed-ok lines keyed to the check numbers; earlier blockers now closed (`b1 closed: <how>`). simplifier: the ask in one sentence (the yardstick), and keep-as-is (complexity the ask requires). `none` when empty.
 ```
 
-a later round starts by reading the spec's `## log` entries since its last round, then marks earlier blockers closed or still open under its `### others`; it does not edit earlier rounds. the lead may append a dated `- lead: <decision>` line under a round when it accepts or rejects a finding. a blocker is: wrong behavior, a missed constraint, hidden coupling, wrong abstraction, a broken assumption, a swallowed error or silent fallback, a dropped scope item, or complexity that is not earned. unearned complexity is a blocker, not a nitpick. a nitpick is ignorable. never blend the lists. every finding cites evidence (file:line, quoted text). the reviewer does not edit the code.
+a later round starts by reading the spec's `## log` entries since its last round, then marks earlier blockers closed or still open under its `### others`; it does not edit earlier rounds. the lead may append a dated `- lead: <decision>` line under a round when it accepts or rejects a finding. a blocker is: wrong behavior, a missed constraint, hidden coupling, wrong abstraction, a broken assumption, a swallowed error or silent fallback, a dropped scope item, complexity that is not earned, missing or weak tests, missing or invalid proof. unearned complexity is a blocker, not a nitpick. a nitpick is ignorable. never blend the lists. every finding cites evidence (file:line, quoted text). the reviewer does not edit the code.
 
 ## story
 
